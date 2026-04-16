@@ -22,10 +22,10 @@
                 <div class="card-header">
                     Tambah Siswa
 
-                    <a href="/students" type="button" class="btn btn-danger float-right">Kembali</a>
+                    <a href="{{ route('students.index') }}" type="button" class="btn btn-danger float-right">Kembali</a>
                 </div>
 
-                <form action="/student/add" method="POST">
+                <form action="{{ route('students.store') }}" method="POST">
                     @csrf
                     <div class="card-body">
 
@@ -82,7 +82,7 @@
                     </div>
 
                     <div class="card-footer">
-                        <a href="/student" class="btn btn-danger">Batal</a>
+                        <a href="{{ route('students.index') }}" class="btn btn-danger">Batal</a>
                         <button type="reset" class="btn btn-warning">Reset</button>
                         <button type="submit" class="btn btn-success">Simpan</button>
                     </div>
