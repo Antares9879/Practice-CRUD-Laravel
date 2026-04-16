@@ -122,6 +122,12 @@ class StudentController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        // Menghapus data mahasiswa dari database
+        $student = Student::findOrFail($id);
+        if ($student->delete()) {
+            return redirect()->route('students.index')->with('success', 'Data mahasiswa berhasil dihapus.');
+        } else {
+            return redirect()->back()->with('error', 'Gagal menghapus data mahasiswa. Silakan coba lagi.');
+        }
     }
 }
