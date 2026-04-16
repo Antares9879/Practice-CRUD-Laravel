@@ -75,7 +75,10 @@ class StudentController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        // Menampilkan form untuk mengedit data mahasiswa
+        $student = Student::findOrFail($id);
+        return view('student.edit', compact('student'));
+
     }
 
     /**
@@ -83,7 +86,35 @@ class StudentController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        // Memperbarui dan validasi data mahasiswa di database
+        $validatedData = $request->validate([
+            'nim' => 'required|string|max:20|unique:students,nim,' . $id,
+            'nama' => 'required|string|max:255',
+            'email' => 'required|email|unique:students,email,' . $id,
+            'prodi' => 'required',
+        ], [
+            'nim.required' => 'NIM wajib diisi.',
+            'nim.unique' => 'NIM sudah digunakan.',
+            'nama.required' => 'Nama wajib diisi.',
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'email.unique' => 'Email sudah digunakan.',
+            'prodi.required' => 'Program studi wajib dipilih.',
+        ]);
+
+        $student = Student::findOrFail($id);
+
+        $student->nim = $validatedData['nim'];
+        $student->nama = $validatedData['nama'];
+        $student->email = $validatedData['email'];
+        $student->prodi = $validatedData['prodi'];
+
+        if ($student->save()) {
+            return redirect()->route('students.index')->with('success', 'Data mahasiswa berhasil diperbarui.');
+        } else {
+            return redirect()->back()->with('error', 'Gagal memperbarui data mahasiswa. Silakan coba lagi.');
+        }
+
     }
 
     /**
