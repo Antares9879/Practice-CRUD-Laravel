@@ -32,8 +32,35 @@ class StudentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // Menyimpan data mahasiswa baru ke database
+        $validatedData = $request->validate([
+            'nim' => 'required|string|max:20|unique:students,nim',
+            'nama' => 'required|string|max:255',
+            'email' => 'required|email|unique:students,email',
+            'prodi' => 'required',
+        ], [
+            'nim.required' => 'NIM wajib diisi.',
+            'nim.unique' => 'NIM sudah digunakan.',
+            'nama.required' => 'Nama wajib diisi.',
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'email.unique' => 'Email sudah digunakan.',
+            'prodi.required' => 'Program studi wajib dipilih.',]
+        );
+
+        $students= new Student();
+        $students->nim = $validatedData['nim'];
+        $students->nama = $validatedData['nama'];
+        $students->email = $validatedData['email'];
+        $students->prodi = $validatedData['prodi'];
+        
+    if ($students->save()) {
+            return redirect()->route('students.index')->with('success', 'Data mahasiswa berhasil disimpan.');
+        } else {
+            return redirect()->back()->with('error', 'Gagal menyimpan data mahasiswa. Silakan coba lagi.');
+        }
     }
+
 
     /**
      * Display the specified resource.
