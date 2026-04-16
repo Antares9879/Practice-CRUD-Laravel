@@ -49,12 +49,6 @@
                 </div>
 
                 <div class="card-body">
-                    @if(session('notifikasi'))
-                        <div class="alert alert-{{ session('type') }}">
-                            {{ session('notifikasi') }}
-                        </div>
-                    @endif
-
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover students-table mb-0">
                             <colgroup>
@@ -84,7 +78,9 @@
                                         <td>
                                             <a href="{{ route('students.edit', $data->id) }}" class="btn btn-sm btn-warning mr-1"><i class="bi bi-search"></i>Edit</a>
                                             <form method="POST" action="{{ route('students.destroy', $data->id) }}"
-                                                class="d-inline-block">
+                                                class="d-inline-block js-confirm-form"
+                                                data-confirm-title="Hapus Data?"
+                                                data-confirm-text="Data yang dihapus tidak dapat dikembalikan.">
                                                 @csrf @method('DELETE')
 
                                                 <button type="submit" class="btn btn-sm btn-danger mr-1">Hapus</button>
@@ -115,6 +111,47 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
+    <div id="flash-data"
+        data-message="{{ session('success') ?? session('error') ?? session('notifikasi') }}"
+        data-type="{{ session('success') ? 'success' : (session('error') ? 'error' : (session('type') ?? '')) }}">
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const flashElement = document.getElementById('flash-data');
+            const flashMessage = flashElement ? flashElement.dataset.message : '';
+            const flashType = flashElement ? flashElement.dataset.type : '';
+            const swalIcon = ['success', 'error', 'warning', 'info', 'question'].includes(flashType) ? flashType : 'info';
+
+            if (flashMessage) {
+                Swal.fire({
+                    icon: swalIcon,
+                    title: swalIcon === 'success' ? 'Berhasil' : (swalIcon === 'error' ? 'Gagal' : 'Informasi'),
+                    text: flashMessage,
+                    confirmButtonText: 'OK'
+                });
+            }
+
+            document.querySelectorAll('.js-confirm-form').forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    event.preventDefault();
+
+                    Swal.fire({
+                        title: form.dataset.confirmTitle || 'Konfirmasi',
+                        text: form.dataset.confirmText || 'Apakah Anda yakin?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Ya, lanjutkan',
+                        cancelButtonText: 'Batal'
+                    }).then(function (result) {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

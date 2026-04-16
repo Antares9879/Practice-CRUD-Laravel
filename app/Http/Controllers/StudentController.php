@@ -54,10 +54,10 @@ class StudentController extends Controller
         $students->email = $validatedData['email'];
         $students->prodi = $validatedData['prodi'];
         
-    if ($students->save()) {
+        if ($students->save()) {
             return redirect()->route('students.index')->with('success', 'Data mahasiswa berhasil disimpan.');
         } else {
-            return redirect()->back()->with('error', 'Gagal menyimpan data mahasiswa. Silakan coba lagi.');
+            return redirect()->back()->withInput()->with('error', 'Gagal menyimpan data mahasiswa. Silakan coba lagi.');
         }
     }
 
@@ -112,7 +112,7 @@ class StudentController extends Controller
         if ($student->save()) {
             return redirect()->route('students.index')->with('success', 'Data mahasiswa berhasil diperbarui.');
         } else {
-            return redirect()->back()->with('error', 'Gagal memperbarui data mahasiswa. Silakan coba lagi.');
+            return redirect()->back()->withInput()->with('error', 'Gagal memperbarui data mahasiswa. Silakan coba lagi.');
         }
 
     }
