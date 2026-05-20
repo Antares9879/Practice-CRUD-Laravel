@@ -25,7 +25,7 @@
                     <a href="{{ route('students.index') }}" type="button" class="btn btn-danger float-right">Kembali</a>
                 </div>
 
-                <form action="{{ route('students.store') }}" method="POST">
+                <form action="{{ route('students.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="card-body">
                         <div class="form-group">
@@ -70,6 +70,15 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+
+                        {{-- input untuk foto --}}
+                        <div class="form-group">
+                            <label for="foto">Foto (ukuran maksimum 2MB, format: jpg/jpeg/png)</label>
+                            <input type="file" id="foto" name="foto" class="form-control-file @error('foto') is-invalid @enderror" accept=".jpg,.jpeg,.png">
+                            @error('foto')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
 
                     <div class="card-footer">
@@ -112,6 +121,56 @@
                     confirmButtonText: 'OK'
                 });
             }
+
+            // validasi client-side untuk kriteria foto
+            const fotoInput = document.getElementById('foto');
+            if (fotoInput) {
+                fotoInput.addEventListener('change', function () {
+                    const file = this.files[0];
+                    if (file) {
+                        const validTypes = ['image/jpeg', 'image/png'];
+                        const maxSize = 2 * 1024 * 1024; // 2MB
+
+                        if (!validTypes.includes(file.type)) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Format Tidak Valid',
+                                text: 'Hanya file JPG, JPEG, dan PNG yang diperbolehkan.',
+                                confirmButtonText: 'OK'
+                            });
+                            this.value = ''; // reset input
+                        } else if (file.size > maxSize) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Ukuran Terlalu Besar',
+                                text: 'Ukuran file tidak boleh lebih dari 2MB.',
+                                confirmButtonText: 'OK'
+                            });
+                            this.value = ''; // reset input
+                        }
+                    }
+                });
+            }
+
+            // Konfirmasi untuk form dengan class .js-confirm-form
+            document.querySelectorAll('.js-confirm-form').forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    event.preventDefault();
+
+                    Swal.fire({
+                        title: form.dataset.confirmTitle || 'Konfirmasi',
+                        text: form.dataset.confirmText || 'Apakah Anda yakin?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Ya, lanjutkan',
+                        cancelButtonText: 'Batal'
+                    }).then(function (result) {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
         });
     </script>
 </body>

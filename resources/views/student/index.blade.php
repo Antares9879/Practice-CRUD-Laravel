@@ -64,6 +64,7 @@
                                     <th>NIM</th>
                                     <th>Nama</th>
                                     <th>Prodi</th>
+                                    <th>Foto</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -75,6 +76,13 @@
                                         <td>{{ $data->nim }}</td>
                                         <td>{{ $data->nama }}</td>
                                         <td>{{ $data->prodi }}</td>
+                                        <td>
+                                            @if ($data->foto)
+                                                <img src="{{ asset('storage/' . $data->foto) }}" alt="Foto" class="img-thumbnail" style="max-width: 100px; max-height: 100px;">
+                                            @else
+                                                <span class="text-muted">Tidak ada foto</span>
+                                            @endif
+                                        </td>
                                         <td>
                                             <a href="{{ route('students.edit', $data->id) }}" class="btn btn-sm btn-warning mr-1"><i class="bi bi-search"></i>Edit</a>
                                             <form method="POST" action="{{ route('students.destroy', $data->id) }}"

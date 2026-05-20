@@ -38,6 +38,7 @@ class StudentController extends Controller
             'nama' => 'required|string|max:255',
             'email' => 'required|email|unique:students,email',
             'prodi' => 'required',
+            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ], [
             'nim.required' => 'NIM wajib diisi.',
             'nim.unique' => 'NIM sudah digunakan.',
@@ -45,7 +46,10 @@ class StudentController extends Controller
             'email.required' => 'Email wajib diisi.',
             'email.email' => 'Format email tidak valid.',
             'email.unique' => 'Email sudah digunakan.',
-            'prodi.required' => 'Program studi wajib dipilih.',]
+            'prodi.required' => 'Program studi wajib dipilih.',
+            'foto.image' => 'File harus berupa gambar.',
+            'foto.mimes' => 'Hanya file JPG, JPEG, dan PNG yang diperbolehkan.',
+            'foto.max' => 'Ukuran file tidak boleh lebih dari 2MB.',]
         );
 
         $students= new Student();
@@ -53,7 +57,7 @@ class StudentController extends Controller
         $students->nama = $validatedData['nama'];
         $students->email = $validatedData['email'];
         $students->prodi = $validatedData['prodi'];
-        
+        $students->foto = $validatedData['foto'] ?? null;
         if ($students->save()) {
             return redirect()->route('students.index')->with('success', 'Data mahasiswa berhasil disimpan.');
         } else {
@@ -92,6 +96,7 @@ class StudentController extends Controller
             'nama' => 'required|string|max:255',
             'email' => 'required|email|unique:students,email,' . $id,
             'prodi' => 'required',
+            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ], [
             'nim.required' => 'NIM wajib diisi.',
             'nim.unique' => 'NIM sudah digunakan.',
@@ -100,6 +105,9 @@ class StudentController extends Controller
             'email.email' => 'Format email tidak valid.',
             'email.unique' => 'Email sudah digunakan.',
             'prodi.required' => 'Program studi wajib dipilih.',
+            'foto.image' => 'File harus berupa gambar.',
+            'foto.mimes' => 'Hanya file JPG, JPEG, dan PNG yang diperbolehkan.',
+            'foto.max' => 'Ukuran file tidak boleh lebih dari 2MB.',
         ]);
 
         $student = Student::findOrFail($id);
