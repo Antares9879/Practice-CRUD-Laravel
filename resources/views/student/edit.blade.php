@@ -25,7 +25,7 @@
                     <a href="{{ route('students.index') }}" type="button" class="btn btn-danger float-right">Kembali</a>
                 </div>
 
-                <form action="{{ route('students.update', $student->id) }}" method="POST"
+                <form action="{{ route('students.update', $student->id) }}" method="POST" enctype="multipart/form-data"
                     class="js-confirm-form"
                     data-confirm-title="Update Data?"
                     data-confirm-text="Pastikan data yang diubah sudah benar.">
@@ -93,7 +93,15 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                    </div>
+
+                        <div class="form-group">
+                            <label for="foto">Foto (ukuran maksimum 2MB, format: jpg/jpeg/png)</label>
+                            <input type="file" id="foto" name="foto"
+                                class="form-control-file @error('foto') is-invalid @enderror" accept=".jpg,.jpeg,.png">
+                            @error('foto')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
                     <div class="card-footer">
                         <a href="{{ route('students.index') }}" class="btn btn-danger">Batal</a>
@@ -133,6 +141,48 @@
                     title: swalIcon === 'success' ? 'Berhasil' : (swalIcon === 'error' ? 'Gagal' : 'Informasi'),
                     text: flashMessage,
                     confirmButtonText: 'OK'
+                });
+            }
+
+            // tampilkan foto dalam modal saat diklik
+            document.querySelectorAll('.foto-student').forEach(function (img) {
+                img.addEventListener('click', function () {
+                    const studentName = this.getAttribute('data-student-name') || 'Foto Siswa';
+                    Swal.fire({
+                        title: 'Foto - ' + studentName,
+                        imageUrl: this.src,
+                        imageAlt: studentName,
+                        showCloseButton: true,
+                        showConfirmButton: false,
+                        imageWidth: 400,
+                        imageHeight: 500,
+                    });
+                });
+            });
+
+            // validasi foto client-side
+            const fotoInput = document.getElementById('foto');
+            if (fotoInput) {
+                fotoInput.addEventListener('change', function () {
+                    const file = this.files[0];
+                    if (file) {
+                        const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+                        if (!validTypes.includes(file.type)) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Format Tidak Valid',
+                                text: 'Hanya file JPG, JPEG, dan PNG yang diperbolehkan.',
+                            });
+                            this.value = '';
+                        } else if (file.size > 2048 * 1024) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Ukuran Terlalu Besar',
+                                text: 'Ukuran file tidak boleh lebih dari 2MB.',
+                            });
+                            this.value = '';
+                        }
+                    }
                 });
             }
 

@@ -39,7 +39,7 @@ class StudentController extends Controller
             'nama' => 'required|string|max:255',
             'email' => 'required|email|unique:students,email',
             'prodi' => 'required',
-            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'foto' => 'nullable|file|mimes:jpg,jpeg,png,gif|max:2048',
         ], [
             'nim.required' => 'NIM wajib diisi.',
             'nim.unique' => 'NIM sudah digunakan.',
@@ -48,8 +48,8 @@ class StudentController extends Controller
             'email.email' => 'Format email tidak valid.',
             'email.unique' => 'Email sudah digunakan.',
             'prodi.required' => 'Program studi wajib dipilih.',
-            'foto.image' => 'File harus berupa gambar.',
-            'foto.mimes' => 'Hanya file JPG, JPEG, dan PNG yang diperbolehkan.',
+            'foto.file' => 'Foto harus berupa file.',
+            'foto.mimes' => 'Hanya file JPG, JPEG, PNG, dan GIF yang diperbolehkan.',
             'foto.max' => 'Ukuran file tidak boleh lebih dari 2MB.',]
         );
 
@@ -103,7 +103,7 @@ class StudentController extends Controller
             'nama' => 'required|string|max:255',
             'email' => 'required|email|unique:students,email,' . $id,
             'prodi' => 'required',
-            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'foto' => 'nullable|file|mimes:jpg,jpeg,png,gif|max:2048',
         ], [
             'nim.required' => 'NIM wajib diisi.',
             'nim.unique' => 'NIM sudah digunakan.',
@@ -112,8 +112,8 @@ class StudentController extends Controller
             'email.email' => 'Format email tidak valid.',
             'email.unique' => 'Email sudah digunakan.',
             'prodi.required' => 'Program studi wajib dipilih.',
-            'foto.image' => 'File harus berupa gambar.',
-            'foto.mimes' => 'Hanya file JPG, JPEG, dan PNG yang diperbolehkan.',
+            'foto.file' => 'Foto harus berupa file.',
+            'foto.mimes' => 'Hanya file JPG, JPEG, PNG, dan GIF yang diperbolehkan.',
             'foto.max' => 'Ukuran file tidak boleh lebih dari 2MB.',
         ]);
 
