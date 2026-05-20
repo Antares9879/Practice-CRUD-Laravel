@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Student;
+use Illuminate\Support\Facades\Storage;
 
 class StudentController extends Controller
 {
@@ -57,7 +58,13 @@ class StudentController extends Controller
         $students->nama = $validatedData['nama'];
         $students->email = $validatedData['email'];
         $students->prodi = $validatedData['prodi'];
-        $students->foto = $validatedData['foto'] ?? null;
+        
+        // Simpan foto jika ada
+        if ($request->hasFile('foto')) {
+            $fotoPath = $request->file('foto')->store('fotos', 'public');
+            $students->foto = $fotoPath;
+        }
+        
         if ($students->save()) {
             return redirect()->route('students.index')->with('success', 'Data mahasiswa berhasil disimpan.');
         } else {
@@ -117,6 +124,17 @@ class StudentController extends Controller
         $student->email = $validatedData['email'];
         $student->prodi = $validatedData['prodi'];
 
+        // Simpan foto jika ada file baru
+        if ($request->hasFile('foto')) {
+            // Hapus foto lama jika ada
+            if ($student->foto && Storage::disk('public')->exists($student->foto)) {
+                Storage::disk('public')->delete($student->foto);
+            }
+            // Simpan foto baru
+            $fotoPath = $request->file('foto')->store('fotos', 'public');
+            $student->foto = $fotoPath;
+        }
+
         if ($student->save()) {
             return redirect()->route('students.index')->with('success', 'Data mahasiswa berhasil diperbarui.');
         } else {
@@ -130,12 +148,23 @@ class StudentController extends Controller
      */
     public function destroy(string $id)
     {
-        // Menghapus data mahasiswa dari database
+        // Menambah fungsi firstOrFail untuk memastikan data ditemukan sebelum dihapus
         $student = Student::findOrFail($id);
+
+        // Mengambil data foto
+        $fotoPath = $student->foto;
+
+        // Menghapus data mahasiswa dari database
         if ($student->delete()) {
+            // Jika ada foto, hapus file foto dari storage
+            if ($fotoPath && Storage::disk('public')->exists($fotoPath)) {
+                Storage::disk('public')->delete($fotoPath); 
+            }
+            // Redirect dengan pesan sukses
             return redirect()->route('students.index')->with('success', 'Data mahasiswa berhasil dihapus.');
         } else {
-            return redirect()->back()->with('error', 'Gagal menghapus data mahasiswa. Silakan coba lagi.');
+            // Redirect dengan pesan error jika gagal menghapus data mahasiswa
+            return redirect()->route('students.index')->with('error', 'Gagal menghapus data mahasiswa. Silakan coba lagi.');
         }
     }
 }

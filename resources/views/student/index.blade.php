@@ -33,6 +33,16 @@
             text-align: center;
             white-space: nowrap;
         }
+
+        .foto-student {
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .foto-student:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+        }
     </style>
 </head>
 
@@ -78,7 +88,7 @@
                                         <td>{{ $data->prodi }}</td>
                                         <td>
                                             @if ($data->foto)
-                                                <img src="{{ asset('storage/' . $data->foto) }}" alt="Foto" class="img-thumbnail" style="max-width: 100px; max-height: 100px;">
+                                                <img src="{{ asset('storage/' . $data->foto) }}" alt="Foto {{ $data->nama }}" class="img-thumbnail foto-student" style="max-width: 100px; max-height: 100px; cursor: pointer;" data-student-name="{{ $data->nama }}">
                                             @else
                                                 <span class="text-muted">Tidak ada foto</span>
                                             @endif
@@ -139,6 +149,22 @@
                     confirmButtonText: 'OK'
                 });
             }
+
+            // tampilkan foto dalam modal saat diklik
+            document.querySelectorAll('.foto-student').forEach(function (img) {
+                img.addEventListener('click', function () {
+                    const studentName = this.getAttribute('data-student-name') || 'Foto Siswa';
+                    Swal.fire({
+                        title: 'Foto - ' + studentName,
+                        imageUrl: this.src,
+                        imageAlt: studentName,
+                        showCloseButton: true,
+                        showConfirmButton: false,
+                        imageWidth: 400,
+                        imageHeight: 500,
+                    });
+                });
+            });
 
             document.querySelectorAll('.js-confirm-form').forEach(function (form) {
                 form.addEventListener('submit', function (event) {
